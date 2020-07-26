@@ -1,5 +1,6 @@
 package com.danieljensen.hndvrkerven;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
@@ -16,9 +17,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,16 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private CollectionReference mColRef = FirebaseFirestore.getInstance().collection("locations");
     private RecyclerView recyclerView;
     private SearchViewAdapter adapter;
+    private List<Location> recentSearches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        RecyclerView searchSuggestions = findViewById(R.id.searchSuggestions);
-
-        SearchView search = findViewById(R.id.searchView);
+        final SearchView search = findViewById(R.id.searchView);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -48,17 +59,69 @@ public class MainActivity extends AppCompatActivity {
                     searchQuery(newText);
                 }
                 else{
-
                 }
                 return false;
             }
         });
         initRecyclerView();
+        recentSearches = new ArrayList<>();
+        loadRecentSearches();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        saveRecentSearches();
+    }
+
+    private void saveRecentSearches() {
+        try {
+            Gson gson = new GsonBuilder().create();
+            Log.e("ven2", "2");
+         //   String jsonString = gson.toJson(recentSearches);
+//            Log.e("ven", jsonString);
+            FileOutputStream fos = this.openFileOutput("RecentSearches.json", Context.MODE_PRIVATE);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+            gson.toJson(recentSearches, writer);
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fos);
+//            objectOutputStream.write(jsonString.getBytes());
+            writer.close();
+            fos.close();
+
+        } catch (IOException e) {
+            Log.e("ven2", String.valueOf(e));
+            e.printStackTrace();
+        }
+    }
+
+    private void loadRecentSearches() {
+        try {
+            FileInputStream inputStream = this.openFileInput("RecentSearches.json");
+            String inputString = convertStreamToString(inputStream);
+            Log.e("ven", inputString);
+            Gson gson = new Gson();
+             List<Location> locations = Arrays.asList(gson.fromJson(inputString, Location[].class));
+            adapter.updateResults(locations);
+        }
+        catch (Exception e) {
+            Log.e("ven2", "load", e);
+        }
+    }
+
+    public static String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString();
     }
 
     private void initRecyclerView() {
         recyclerView = findViewById(R.id.searchSuggestions);
-        adapter = new SearchViewAdapter(this, new ArrayList<String>(), new ArrayList<String>());
+        adapter = new SearchViewAdapter(new ArrayList<Location>(), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -74,15 +137,20 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("ven", String.valueOf(task.getResult().size()));
                 QuerySnapshot result = task.getResult();
                 Iterator<QueryDocumentSnapshot> iterator = result.iterator();
-                ArrayList<String> mStore = new ArrayList<>();
-                ArrayList<String> mAddress = new ArrayList<>();
+                ArrayList<Location> locations = new ArrayList<>();
                 while (iterator.hasNext()) {
-                    Map<String, Object> data = iterator.next().getData();
-                    mAddress.add((String) data.get("address"));
-                    mStore.add((String) data.get("store"));
-                    Log.e("ven", mAddress.toString());
+                    QueryDocumentSnapshot documentSnapshot = iterator.next();
+                    String id = documentSnapshot.getReference().getId();
+                    Map<String, Object> data = documentSnapshot.getData();
+                    String store = (String) data.get("store");
+                    String address = (String) data.get("address");
+                    Location location = new Location(store, address, id);
+                    locations.add(location);
                 }
-                adapter.updateResults(mStore, mAddress);
+                recentSearches.clear();
+                recentSearches.addAll(locations);
+                saveRecentSearches();
+                adapter.updateResults(locations);
             }
         });
     }

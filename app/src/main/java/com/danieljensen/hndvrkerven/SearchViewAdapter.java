@@ -1,8 +1,6 @@
 package com.danieljensen.hndvrkerven;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,21 +8,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<String> mStore = new ArrayList<>();
-    private ArrayList<String> mAddress = new ArrayList<>();
+    private ArrayList<Location> mLocations;
     private Context mContext;
 
-    public SearchViewAdapter(Context context, ArrayList<String> mStore, ArrayList<String> mAddress) {
-        this.mStore = mStore;
-        this.mAddress = mAddress;
-        this.mContext = context;
+    public SearchViewAdapter(ArrayList<Location> mLocations, Context mContext) {
+        this.mLocations = mLocations;
+        this.mContext = mContext;
     }
 
     @NonNull
@@ -39,8 +35,8 @@ public class SearchViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
 
-        viewHolder.store.setText(mStore.get(position));
-        viewHolder.address.setText(mAddress.get(position));
+        viewHolder.store.setText(mLocations.get(position).getStore());
+        viewHolder.address.setText(mLocations.get(position).getAddress());
 
         viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,14 +48,12 @@ public class SearchViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mStore.size();
+        return mLocations.size();
     }
 
-    public void updateResults(ArrayList<String> store, ArrayList<String> address) {
-        mStore.clear();
-        mAddress.clear();
-        mStore.addAll(store);
-        mAddress.addAll(address);
+    public void updateResults(List<Location> locations) {
+        mLocations.clear();
+        mLocations.addAll(locations);
         notifyDataSetChanged();
     }
 
