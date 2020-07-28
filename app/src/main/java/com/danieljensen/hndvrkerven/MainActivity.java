@@ -1,6 +1,7 @@
 package com.danieljensen.hndvrkerven;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
@@ -26,7 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,10 +34,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchViewAdapter.OnSearchViewListener {
 
     private CollectionReference mColRef = FirebaseFirestore.getInstance().collection("locations");
-    private RecyclerView recyclerView;
     private SearchViewAdapter adapter;
     private List<Location> recentSearches;
 
@@ -78,13 +77,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             Gson gson = new GsonBuilder().create();
             Log.e("ven2", "2");
-         //   String jsonString = gson.toJson(recentSearches);
-//            Log.e("ven", jsonString);
             FileOutputStream fos = this.openFileOutput("RecentSearches.json", Context.MODE_PRIVATE);
             OutputStreamWriter writer = new OutputStreamWriter(fos);
             gson.toJson(recentSearches, writer);
-//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fos);
-//            objectOutputStream.write(jsonString.getBytes());
             writer.close();
             fos.close();
 
@@ -100,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             String inputString = convertStreamToString(inputStream);
             Log.e("ven", inputString);
             Gson gson = new Gson();
-             List<Location> locations = Arrays.asList(gson.fromJson(inputString, Location[].class));
+            List<Location> locations = Arrays.asList(gson.fromJson(inputString, Location[].class));
             adapter.updateResults(locations);
         }
         catch (Exception e) {
@@ -120,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        recyclerView = findViewById(R.id.searchSuggestions);
-        adapter = new SearchViewAdapter(new ArrayList<Location>(), this);
+        RecyclerView recyclerView = findViewById(R.id.searchSuggestions);
+        adapter = new SearchViewAdapter(new ArrayList<Location>(), this, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -153,5 +148,12 @@ public class MainActivity extends AppCompatActivity {
                 adapter.updateResults(locations);
             }
         });
+    }
+
+    @Override
+    public void onSearchClick(int position) {
+//        recentSearches.get(position);
+        Intent intent = new Intent(this, DetailsActivity.class);
+        startActivity(intent);
     }
 }
