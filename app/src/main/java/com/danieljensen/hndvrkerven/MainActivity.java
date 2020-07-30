@@ -1,13 +1,13 @@
 package com.danieljensen.hndvrkerven;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,16 +34,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements SearchViewAdapter.OnSearchViewListener {
+public class MainActivity extends AppCompatActivity implements SearchViewOnClickListener {
 
     private CollectionReference mColRef = FirebaseFirestore.getInstance().collection("locations");
     private SearchViewAdapter adapter;
-    private List<Location> recentSearches;
+    private MainActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         final SearchView search = findViewById(R.id.searchView);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -58,12 +60,12 @@ public class MainActivity extends AppCompatActivity implements SearchViewAdapter
                     searchQuery(newText);
                 }
                 else{
+                    adapter.updateResults(viewModel.getRecentSearches());
                 }
                 return false;
             }
         });
         initRecyclerView();
-        recentSearches = new ArrayList<>();
         loadRecentSearches();
     }
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SearchViewAdapter
             Log.e("ven2", "2");
             FileOutputStream fos = this.openFileOutput("RecentSearches.json", Context.MODE_PRIVATE);
             OutputStreamWriter writer = new OutputStreamWriter(fos);
-            gson.toJson(recentSearches, writer);
+            gson.toJson(viewModel.getRecentSearches(), writer);
             writer.close();
             fos.close();
 
@@ -95,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements SearchViewAdapter
             String inputString = convertStreamToString(inputStream);
             Log.e("ven", inputString);
             Gson gson = new Gson();
-            List<Location> locations = Arrays.asList(gson.fromJson(inputString, Location[].class));
-            adapter.updateResults(locations);
+            List<Search> searches = Arrays.asList(gson.fromJson(inputString, Search[].class));
+            adapter.updateResults(searches);
         }
         catch (Exception e) {
             Log.e("ven2", "load", e);
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements SearchViewAdapter
 
     private void initRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.searchSuggestions);
-        adapter = new SearchViewAdapter(new ArrayList<Location>(), this, this);
+        adapter = new SearchViewAdapter(new ArrayList<Search>(), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -132,28 +134,23 @@ public class MainActivity extends AppCompatActivity implements SearchViewAdapter
                 Log.e("ven", String.valueOf(task.getResult().size()));
                 QuerySnapshot result = task.getResult();
                 Iterator<QueryDocumentSnapshot> iterator = result.iterator();
-                ArrayList<Location> locations = new ArrayList<>();
+                ArrayList<Search> searches = new ArrayList<>();
                 while (iterator.hasNext()) {
                     QueryDocumentSnapshot documentSnapshot = iterator.next();
                     String id = documentSnapshot.getReference().getId();
                     Map<String, Object> data = documentSnapshot.getData();
                     String store = (String) data.get("store");
                     String address = (String) data.get("address");
-                    Location location = new Location(store, address, id);
-                    locations.add(location);
+                    Search search = new Search(store, address, id);
+                    searches.add(search);
                 }
-                recentSearches.clear();
-                recentSearches.addAll(locations);
-                saveRecentSearches();
-                adapter.updateResults(locations);
+                adapter.updateResults(searches);
             }
         });
     }
 
     @Override
-    public void onSearchClick(int position) {
-//        recentSearches.get(position);
-        Intent intent = new Intent(this, DetailsActivity.class);
-        startActivity(intent);
+    public void onClick(Search search) {
+        viewModel.addRecentSearches(search);
     }
 }

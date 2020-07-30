@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_floorplan"
-        android:icon="@drawable/ic_baseline_camera_24"
-        android:title="Plan Tegning" />
-
-    <item
         android:id="@+id/nav_info"
         android:icon="@drawable/ic_baseline_view_headline_24"
         android:title="Info Ark" />
 
     <item
-        android:id="@+id/nav_messages"
+        android:id="@+id/nav_floorplan"
+        android:icon="@drawable/ic_baseline_camera_24"
+        android:title="Plantegning" />
+
+    <item
+        android:id="@+id/nav_notes"
         android:icon="@drawable/ic_baseline_message_24"
-        android:title="Beskeder" />
+        android:title="Noter" />
 
 </menu>
