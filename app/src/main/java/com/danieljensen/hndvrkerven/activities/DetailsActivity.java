@@ -1,4 +1,4 @@
-package com.danieljensen.hndvrkerven;
+package com.danieljensen.hndvrkerven.activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,11 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.danieljensen.hndvrkerven.fragments.FloorPlanFragment;
+import com.danieljensen.hndvrkerven.fragments.InfoFragment;
+import com.danieljensen.hndvrkerven.R;
+import com.danieljensen.hndvrkerven.fragments.NotesFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -27,16 +28,10 @@ public class DetailsActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InfoFragment()).commit();
 
-        String documentRef = (String) getIntent().getStringExtra("document");
-        DocumentReference mDocRef = FirebaseFirestore.getInstance().document("locations/" + documentRef);
-        mDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    mDocSnapshot = documentSnapshot;
-                }
-            }
-        });
+
+
+        String documentRef = getIntent().getStringExtra("document");
+//        DetailsActivityViewModel viewModel = new DetailsActivityViewModel(documentRef);
         Log.d("ven", documentRef);
     }
 
@@ -54,7 +49,7 @@ public class DetailsActivity extends AppCompatActivity {
                             selectedFragment = new FloorPlanFragment();
                             break;
                         case R.id.nav_notes:
-                            selectedFragment = new MessagesFragment();
+                            selectedFragment = new NotesFragment();
                             break;
                     }
 

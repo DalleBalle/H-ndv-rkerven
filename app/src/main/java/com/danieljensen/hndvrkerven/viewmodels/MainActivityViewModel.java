@@ -1,8 +1,9 @@
-package com.danieljensen.hndvrkerven;
+package com.danieljensen.hndvrkerven.viewmodels;
 
 import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
+import com.danieljensen.hndvrkerven.models.Search;
+
 import java.util.LinkedList;
 import java.util.List;
 

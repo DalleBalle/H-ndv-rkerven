@@ -1,4 +1,4 @@
-package com.danieljensen.hndvrkerven;
+package com.danieljensen.hndvrkerven.activities;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.danieljensen.hndvrkerven.R;
+import com.danieljensen.hndvrkerven.adapters.SearchViewAdapter;
+import com.danieljensen.hndvrkerven.interfaces.SearchViewOnClickListener;
+import com.danieljensen.hndvrkerven.models.Search;
+import com.danieljensen.hndvrkerven.viewmodels.MainActivityViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;

@@ -1,4 +1,4 @@
-package com.danieljensen.hndvrkerven;
+package com.danieljensen.hndvrkerven.adapters;
 
 import android.content.Intent;
 import android.util.Log;
@@ -10,6 +10,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.danieljensen.hndvrkerven.R;
+import com.danieljensen.hndvrkerven.interfaces.SearchViewOnClickListener;
+import com.danieljensen.hndvrkerven.activities.DetailsActivity;
+import com.danieljensen.hndvrkerven.models.Search;
 
 import java.util.ArrayList;
 import java.util.List;

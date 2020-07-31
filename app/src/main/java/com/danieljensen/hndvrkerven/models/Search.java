@@ -1,4 +1,4 @@
-package com.danieljensen.hndvrkerven;
+package com.danieljensen.hndvrkerven.models;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
