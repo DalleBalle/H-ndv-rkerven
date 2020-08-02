@@ -10,8 +10,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.danieljensen.hndvrkerven.R;
+import com.danieljensen.hndvrkerven.viewmodels.DetailsActivityViewModel;
 
 public class InfoFragment extends Fragment {
+    private DetailsActivityViewModel viewModel;
+
+    public InfoFragment(DetailsActivityViewModel viewModel) {
+
+        this.viewModel = viewModel;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -3,6 +3,7 @@ package com.danieljensen.hndvrkerven.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.danieljensen.hndvrkerven.R;
 

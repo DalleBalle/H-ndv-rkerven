@@ -1,22 +1,20 @@
 package com.danieljensen.hndvrkerven.viewmodels;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-import androidx.lifecycle.ViewModelStoreOwner;
-
 import com.danieljensen.hndvrkerven.models.Location;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class DetailsActivityViewModel {
 
     private Location location;
-    private StorageReference storage;
-    private byte[] floorPlanPicture;
+
+    public DetailsActivityViewModel(String documentReference) {
+        getLocationObj(documentReference);
+    }
 
     private void getLocationObj(String documentRef) {
         DocumentReference docRef = FirebaseFirestore.getInstance().document("locations/" + documentRef);
@@ -30,19 +28,8 @@ public class DetailsActivityViewModel {
         });
     }
 
-    private void getFloorPlan() {
-        StorageReference floorPlanRef = storage.getStorage().getReferenceFromUrl(location.getFloorPlanRef());
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        floorPlanRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                floorPlanPicture = bytes;
-            }
-        });
-    }
-
-    public byte[] getFloorPlanPicture() {
-        return floorPlanPicture;
+    public StorageReference getFloorPlanReference() {
+        StorageReference floorPlanReference = FirebaseStorage.getInstance().getReferenceFromUrl(location.getFloorplanRef());
+        return floorPlanReference;
     }
 }

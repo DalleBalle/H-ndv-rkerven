@@ -12,12 +12,14 @@ import com.danieljensen.hndvrkerven.fragments.FloorPlanFragment;
 import com.danieljensen.hndvrkerven.fragments.InfoFragment;
 import com.danieljensen.hndvrkerven.R;
 import com.danieljensen.hndvrkerven.fragments.NotesFragment;
+import com.danieljensen.hndvrkerven.viewmodels.DetailsActivityViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 public class DetailsActivity extends AppCompatActivity {
 
     private DocumentSnapshot mDocSnapshot;
+    private DetailsActivityViewModel viewModel;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,12 +28,12 @@ public class DetailsActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InfoFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InfoFragment(viewModel)).commit();
 
 
 
         String documentRef = getIntent().getStringExtra("document");
-//        DetailsActivityViewModel viewModel = new DetailsActivityViewModel(documentRef);
+        viewModel = new DetailsActivityViewModel(documentRef);
         Log.d("ven", documentRef);
     }
 
@@ -43,13 +45,13 @@ public class DetailsActivity extends AppCompatActivity {
 
                     switch (item.getItemId()) {
                         case R.id.nav_info:
-                            selectedFragment = new InfoFragment();
+                            selectedFragment = new InfoFragment(viewModel);
                             break;
                         case R.id.nav_floorplan:
-                            selectedFragment = new FloorPlanFragment();
+                            selectedFragment = new FloorPlanFragment(viewModel);
                             break;
                         case R.id.nav_notes:
-                            selectedFragment = new NotesFragment();
+                            selectedFragment = new NotesFragment(viewModel);
                             break;
                     }
 

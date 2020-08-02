@@ -16,8 +16,16 @@ import androidx.fragment.app.Fragment;
 
 import com.danieljensen.hndvrkerven.R;
 import com.danieljensen.hndvrkerven.activities.AddNoteActivity;
+import com.danieljensen.hndvrkerven.viewmodels.DetailsActivityViewModel;
 
 public class NotesFragment extends Fragment {
+    private DetailsActivityViewModel viewModel;
+
+    public NotesFragment(DetailsActivityViewModel viewModel) {
+
+        this.viewModel = viewModel;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
