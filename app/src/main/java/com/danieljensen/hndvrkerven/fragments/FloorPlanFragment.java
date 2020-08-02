@@ -37,7 +37,6 @@ public class FloorPlanFragment extends Fragment {
         StorageReference storageReference = viewModel.getFloorPlanReference();
         View view = inflater.inflate(R.layout.fragment_floorplan, container, false);
         ImageView imageView = view.findViewById(R.id.floorPlanView);
-        imageView.setImageResource(R.drawable.ic_action_name);
         Glide.with(view /* context */)
                 .load(storageReference)
                 .placeholder(R.drawable.ic_baseline_camera_24)
