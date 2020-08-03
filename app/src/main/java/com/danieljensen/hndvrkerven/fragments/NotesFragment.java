@@ -67,6 +67,7 @@ public class NotesFragment extends Fragment {
 
     private void createNewNote() {
         Intent intent = new Intent(getActivity(), AddNoteActivity.class);
+        intent.putExtra("document", getActivity().getIntent().getStringExtra("document"));
         startActivity(intent);
     }
 }
