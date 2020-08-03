@@ -14,7 +14,7 @@
         android:text="Netto"
         android:layout_marginBottom="6dp"
         android:textColor="#000"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:id="@+id/store"/>
 
     <TextView
