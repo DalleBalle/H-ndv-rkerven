@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private CollectionReference mColRef = FirebaseFirestore.getInstance().collection("locations");
     private SearchViewAdapter adapter;
     private MainActivityViewModel viewModel;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-        final SearchView search = findViewById(R.id.searchView);
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -71,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
         });
         initRecyclerView();
         loadRecentSearches();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        searchView.setQuery("", false);
+        searchView.clearFocus();
+        adapter.updateResults(viewModel.getRecentSearches());
     }
 
     @Override
