@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.danieljensen.hndvrkerven.R;
-import com.danieljensen.hndvrkerven.interfaces.SearchViewOnClickListener;
+import com.danieljensen.hndvrkerven.activities.MainActivity;
 import com.danieljensen.hndvrkerven.activities.DetailsActivity;
 import com.danieljensen.hndvrkerven.models.Search;
 
@@ -22,11 +22,11 @@ import java.util.List;
 public class SearchViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Search> mSearches;
-    private SearchViewOnClickListener searchViewOnClickListener;
+    private MainActivity mainActivity;
 
-    public SearchViewAdapter(ArrayList<Search> mSearches, SearchViewOnClickListener searchViewOnClickListener) {
+    public SearchViewAdapter(ArrayList<Search> mSearches, MainActivity mainActivity) {
         this.mSearches = mSearches;
-        this.searchViewOnClickListener = searchViewOnClickListener;
+        this.mainActivity = mainActivity;
     }
 
     @NonNull
@@ -76,7 +76,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Intent intent = new Intent(v.getContext(), DetailsActivity.class);
             intent.putExtra("document", mSearches.get(getAdapterPosition()).getDocumentReference());
             v.getContext().startActivity(intent);
-            searchViewOnClickListener.onClick(mSearches.get(getAdapterPosition()));
+            mainActivity.addToRecentSearches(mSearches.get(getAdapterPosition()));
         }
     }
 }

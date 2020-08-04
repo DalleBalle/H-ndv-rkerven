@@ -27,11 +27,11 @@ public class DetailsActivityViewModel {
 
     public DetailsActivityViewModel(String documentReference) {
         notes = new ArrayList<>();
-        getLocationObj(documentReference);
+        initLocation(documentReference);
         initNotes(documentReference);
     }
 
-    private void getLocationObj(String documentRef) {
+    private void initLocation(String documentRef) {
         DocumentReference docRef = FirebaseFirestore.getInstance().document("locations/" + documentRef);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

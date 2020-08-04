@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.danieljensen.hndvrkerven.R;
 import com.danieljensen.hndvrkerven.adapters.SearchViewAdapter;
-import com.danieljensen.hndvrkerven.interfaces.SearchViewOnClickListener;
 import com.danieljensen.hndvrkerven.models.Search;
 import com.danieljensen.hndvrkerven.viewmodels.MainActivityViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,7 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements SearchViewOnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private CollectionReference mColRef = FirebaseFirestore.getInstance().collection("locations");
     private SearchViewAdapter adapter;
@@ -154,8 +153,7 @@ public class MainActivity extends AppCompatActivity implements SearchViewOnClick
         });
     }
 
-    @Override
-    public void onClick(Search search) {
+    public void addToRecentSearches(Search search) {
         viewModel.addRecentSearches(search);
     }
 }

@@ -1,6 +1,7 @@
 package com.danieljensen.hndvrkerven.adapters;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ public class NotesViewAdapter extends RecyclerView.Adapter<NotesViewAdapter.View
         return mNotes.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView textView;
         LinearLayout noteParentLayout;
@@ -55,6 +56,7 @@ public class NotesViewAdapter extends RecyclerView.Adapter<NotesViewAdapter.View
 
         public void onClick(View v) {
             Intent intent = new Intent(v.getContext(), NoteDetailsActivity.class);
+            intent.putExtra("noteText", mNotes.get(getAdapterPosition()).getNoteText());
             v.getContext().startActivity(intent);
         }
     }
