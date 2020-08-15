@@ -15,20 +15,29 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DetailsActivityViewModel {
 
     private Location location;
     private ArrayList<Note> notes;
+    private List<ViewModelUpdateListener> listeners;
+
+    public DetailsActivityViewModel(String documentReference) {
+        notes = new ArrayList<>();
+        listeners = new ArrayList<>();
+        initLocation(documentReference);
+        initNotes(documentReference);
+    }
 
     public ArrayList<Note> getNotes() {
         return notes;
     }
 
-    public DetailsActivityViewModel(String documentReference) {
-        notes = new ArrayList<>();
-        initLocation(documentReference);
-        initNotes(documentReference);
+    public void addListener(ViewModelUpdateListener listener) {
+        listeners.add(listener);
     }
 
     private void initLocation(String documentRef) {
@@ -38,6 +47,9 @@ public class DetailsActivityViewModel {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
                     location = documentSnapshot.toObject(Location.class);
+                    for (ViewModelUpdateListener listener : listeners) {
+                        listener.onDataChanged();
+                    }
                 }
             }
         });
@@ -48,7 +60,7 @@ public class DetailsActivityViewModel {
         return floorPlanReference;
     }
 
-    public void initNotes(String documentReference) {
+    private void initNotes(String documentReference) {
         DocumentReference docRef = FirebaseFirestore.getInstance().document("locations/" + documentReference);
         final Task<QuerySnapshot> query = FirebaseFirestore.getInstance().collection("notes")
                 .whereEqualTo("docRef", docRef).get();
@@ -64,5 +76,16 @@ public class DetailsActivityViewModel {
                 }
             }
         });
+    }
+
+    public Map<String, List<String>> getDocumentation() {
+        if (location == null) {
+            return new HashMap<>();
+        }
+        return location.getDocumentationData();
+    }
+
+    public List<String> getDocumentationColumn() {
+        return location.getDocumentationColumn();
     }
 }

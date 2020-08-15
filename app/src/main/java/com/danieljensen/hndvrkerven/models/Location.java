@@ -1,9 +1,13 @@
 package com.danieljensen.hndvrkerven.models;
 
+import java.util.List;
+import java.util.Map;
+
 public class Location {
 
     private String address;
-    private String detailTable1;
+    private List<String> documentationColumn;
+    private Map<String, List<String>> documentationData;
     private String floorplanRef;
     private String store;
 
@@ -11,9 +15,10 @@ public class Location {
 
     }
 
-    public Location(String address, String detailTable1, String floorplanRef, String store) {
+    public Location(String address, List<String> documentationColumn, Map<String, List<String>> documentationData, String floorplanRef, String store) {
         this.address = address;
-        this.detailTable1 = detailTable1;
+        this.documentationColumn = documentationColumn;
+        this.documentationData = documentationData;
         this.floorplanRef = floorplanRef;
         this.store = store;
     }
@@ -22,8 +27,8 @@ public class Location {
         this.address = address;
     }
 
-    public void setDetailTable1(String detailTable1) {
-        this.detailTable1 = detailTable1;
+    public void setDocumentationData(Map<String, List<String>> documentationData) {
+        this.documentationData = documentationData;
     }
 
     public void setFloorplanRef(String floorplanRef) {
@@ -38,8 +43,8 @@ public class Location {
         return address;
     }
 
-    public String getDetailTable1() {
-        return detailTable1;
+    public Map<String, List<String>> getDocumentationData() {
+        return documentationData;
     }
 
     public String getFloorplanRef() {
@@ -48,5 +53,9 @@ public class Location {
 
     public String getStore() {
         return store;
+    }
+
+    public List<String> getDocumentationColumn() {
+        return documentationColumn;
     }
 }

@@ -8,17 +8,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.danieljensen.hndvrkerven.R;
 import com.danieljensen.hndvrkerven.fragments.FloorPlanFragment;
 import com.danieljensen.hndvrkerven.fragments.InfoFragment;
-import com.danieljensen.hndvrkerven.R;
 import com.danieljensen.hndvrkerven.fragments.NotesFragment;
 import com.danieljensen.hndvrkerven.viewmodels.DetailsActivityViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    private DocumentSnapshot mDocSnapshot;
     private DetailsActivityViewModel viewModel;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +26,10 @@ public class DetailsActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InfoFragment(viewModel)).commit();
-
-
-
         String documentRef = getIntent().getStringExtra("document");
         viewModel = new DetailsActivityViewModel(documentRef);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InfoFragment(viewModel)).commit();
+
         Log.d("ven", documentRef);
     }
 
