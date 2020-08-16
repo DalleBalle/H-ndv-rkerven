@@ -21,4 +21,8 @@ public class MainActivityViewModel extends ViewModel {
     public void addRecentSearches(Search search) {
         this.recentSearches.addFirst(search);
     }
+
+    public void addAllRecentSearches(List<Search> searchList) {
+        this.recentSearches.addAll(searchList);
+    }
 }

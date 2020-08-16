@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
             String inputString = convertStreamToString(inputStream);
             Log.e("ven", inputString);
             Gson gson = new Gson();
-            List<Search> searches = Arrays.asList(gson.fromJson(inputString, Search[].class));
-            adapter.updateResults(searches);
+            viewModel.addAllRecentSearches(Arrays.asList(gson.fromJson(inputString, Search[].class)));
+            adapter.updateResults(viewModel.getRecentSearches());
         }
         catch (Exception e) {
             Log.e("ven2", "load", e);
