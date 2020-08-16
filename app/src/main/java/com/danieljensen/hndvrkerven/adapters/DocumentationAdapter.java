@@ -1,7 +1,6 @@
 package com.danieljensen.hndvrkerven.adapters;
 
 import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.danieljensen.hndvrkerven.viewmodels.DetailsActivityViewModel;
 import com.danieljensen.hndvrkerven.viewmodels.ViewModelUpdateListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -74,21 +72,22 @@ public class DocumentationAdapter extends RecyclerView.Adapter<DocumentationAdap
             camName = itemView.findViewById(R.id.camName);
             ipAddress = itemView.findViewById(R.id.ipAddress);
             docLayout = itemView.findViewById(R.id.documentation_layout);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(v.getContext(), InfoDetailsActivity.class);
 
-            intent.putExtra("documentationColumn", (Parcelable) viewModel.getDocumentationColumn());
+            intent.putStringArrayListExtra("documentationColumn", (ArrayList<String>) viewModel.getDocumentationColumn());
 
             ArrayList<String> data = new ArrayList<>();
             for (Map.Entry<String, List<String>> entry : viewModel.getDocumentation().entrySet()) {
                 data.add(entry.getValue().get(getAdapterPosition()));
             }
-            intent.putExtra("documentationData", (Parcelable) data);
+            intent.putStringArrayListExtra("documentationData", data);
 
-//            v.getContext().startActivity(intent);
+            v.getContext().startActivity(intent);
         }
     }
 }
