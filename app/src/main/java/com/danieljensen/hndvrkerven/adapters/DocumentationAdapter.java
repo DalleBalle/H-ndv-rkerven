@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.danieljensen.hndvrkerven.R;
 import com.danieljensen.hndvrkerven.activities.InfoDetailsActivity;
+import com.danieljensen.hndvrkerven.models.ParcelableMap;
 import com.danieljensen.hndvrkerven.viewmodels.DetailsActivityViewModel;
 import com.danieljensen.hndvrkerven.viewmodels.ViewModelUpdateListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,18 +42,18 @@ public class DocumentationAdapter extends RecyclerView.Adapter<DocumentationAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        List<String> names = mDocumentation.get("0");
+        List<String> names = mDocumentation.get("Navn");
         holder.camName.setText(names != null ? names.get(position) : "");
-        List<String> ipaddresses = mDocumentation.get("1");
+        List<String> ipaddresses = mDocumentation.get("IP-adresse");
         holder.ipAddress.setText(ipaddresses != null ? ipaddresses.get(position) : "");
     }
 
     @Override
     public int getItemCount() {
-        if (mDocumentation == null || mDocumentation.get("0") == null) {
+        if (mDocumentation == null || mDocumentation.get("Navn") == null) {
             return 0;
         }
-        return mDocumentation.get("0").size();
+        return mDocumentation.get("Navn").size();
     }
 
     @Override
@@ -81,11 +83,20 @@ public class DocumentationAdapter extends RecyclerView.Adapter<DocumentationAdap
 
             intent.putStringArrayListExtra("documentationColumn", (ArrayList<String>) viewModel.getDocumentationColumn());
 
-            ArrayList<String> data = new ArrayList<>();
+            /*ArrayList<String> data = new ArrayList<>();
             for (Map.Entry<String, List<String>> entry : viewModel.getDocumentation().entrySet()) {
                 data.add(entry.getValue().get(getAdapterPosition()));
             }
-            intent.putStringArrayListExtra("documentationData", data);
+            intent.putStringArrayListExtra("documentationData", data);*/
+
+            Map<String, String> data = new HashMap<>();
+            for (Map.Entry<String, List<String>> entry : viewModel.getDocumentation().entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue().get(getAdapterPosition());
+                data.put(key, value);
+            }
+            ParcelableMap parcelableMap = new ParcelableMap(data);
+            intent.putExtra("documentationData", parcelableMap);
 
             v.getContext().startActivity(intent);
         }

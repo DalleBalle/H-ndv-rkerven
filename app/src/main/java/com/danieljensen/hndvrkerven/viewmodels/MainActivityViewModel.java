@@ -20,6 +20,9 @@ public class MainActivityViewModel extends ViewModel {
 
     public void addRecentSearches(Search search) {
         this.recentSearches.addFirst(search);
+        if (recentSearches.size() > 10) {
+            recentSearches.removeLast();
+        }
     }
 
     public void addAllRecentSearches(List<Search> searchList) {
