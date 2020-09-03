@@ -5,8 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -15,11 +15,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.danieljensen.hndvrkerven.R;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +35,7 @@ import java.util.Map;
 public class AddNoteActivity extends AppCompatActivity {
 
     DocumentReference locationDocRef;
+    StorageReference storageRef = FirebaseStorage.getInstance().getReference("note_pictures");
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private String photoPath;
 
@@ -42,6 +49,8 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     public void sendNote(View view) {
+        Button sendButton = findViewById(R.id.sendNoteButton);
+        sendButton.setEnabled(false);
         EditText noteView = findViewById(R.id.noteEditText);
         String noteText = noteView.getText().toString();
 
@@ -61,6 +70,10 @@ public class AddNoteActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (photoPath != null) {
+            uploadPicture();
+        }
     }
 
     public void takePicture(View view) {
@@ -90,5 +103,13 @@ public class AddNoteActivity extends AppCompatActivity {
         );
         photoPath = image.getAbsolutePath();
         return image;
+    }
+
+    private void uploadPicture() {
+        Uri file = Uri.fromFile(new File(photoPath));
+        StorageReference pictureRef = storageRef.child(file.getLastPathSegment());
+        UploadTask uploadTask = pictureRef.putFile(file);
+
+
     }
 }
