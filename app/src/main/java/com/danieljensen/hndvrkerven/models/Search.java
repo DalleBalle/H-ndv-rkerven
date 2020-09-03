@@ -1,7 +1,6 @@
 package com.danieljensen.hndvrkerven.models;
 
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import androidx.annotation.Nullable;
 
 public class Search {
     private String store;
@@ -14,7 +13,9 @@ public class Search {
         this.documentReference = documentReference;
     }
 
-    public Search() {};
+    public Search() {}
+
+    ;
 
     public String getStore() {
         return store;
@@ -26,5 +27,10 @@ public class Search {
 
     public String getDocumentReference() {
         return documentReference;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return ((Search)obj).store.equals(store) && ((Search)obj).address.equals(address);
     }
 }
