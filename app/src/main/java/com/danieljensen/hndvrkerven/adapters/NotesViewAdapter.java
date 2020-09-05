@@ -57,6 +57,7 @@ public class NotesViewAdapter extends RecyclerView.Adapter<NotesViewAdapter.View
         public void onClick(View v) {
             Intent intent = new Intent(v.getContext(), NoteDetailsActivity.class);
             intent.putExtra("noteText", mNotes.get(getAdapterPosition()).getNoteText());
+            intent.putExtra("pictureRef", mNotes.get(getAdapterPosition()).getPictureRef());
             v.getContext().startActivity(intent);
         }
     }
