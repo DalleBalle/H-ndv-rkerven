@@ -36,6 +36,8 @@ public class AddNoteActivity extends AppCompatActivity {
 
     DocumentReference locationDocRef;
     StorageReference storageRef = FirebaseStorage.getInstance().getReference("note_pictures");
+    String documentId;
+    Uri pictureDownloadUri;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private String photoPath;
 
@@ -63,17 +65,17 @@ public class AddNoteActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Note tilføjet.", Toast.LENGTH_LONG).show();
-                    finish();
+                    if (photoPath == null) {
+                        Toast.makeText(getApplicationContext(), "Note uden billede tilføjet.", Toast.LENGTH_LONG).show();
+                    } else {
+                        documentId = task.getResult().getId();
+                        uploadPicture();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Noget gik galt, prøv igen.", Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-        if (photoPath != null) {
-            uploadPicture();
-        }
     }
 
     public void takePicture(View view) {
@@ -110,6 +112,40 @@ public class AddNoteActivity extends AppCompatActivity {
         StorageReference pictureRef = storageRef.child(file.getLastPathSegment());
         UploadTask uploadTask = pictureRef.putFile(file);
 
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return pictureRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    pictureDownloadUri = task.getResult();
+                    setPictureDownloadUri();
+                }
+            }
+        });
+    }
 
+    private void setPictureDownloadUri() {
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("pictureRef", pictureDownloadUri.toString());
+        DocumentReference documentReference = FirebaseFirestore.getInstance().collection("notes").document(documentId);
+        documentReference.update(docData).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Note med billede tilføjet.", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 }
